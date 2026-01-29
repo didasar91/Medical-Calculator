@@ -424,14 +424,14 @@ h1 {
 
     /* Tables Wrapper */
     .tables-wrapper {
-        width: 100%;
+        width: 50%;
         margin: 2mm 0;
     }
 
     /* SCORING TABLES */
     .scoring-table {
         margin: 1.5mm 0;
-        width: 100%;
+        width: 50%;
         page-break-inside: avoid;
         font-size: 9px;
         border-collapse: collapse;
