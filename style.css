@@ -324,13 +324,15 @@ h1 {
     }
 
     .form-title {
-        margin: 2mm 0 2mm 8mm;
-        padding: 0;
+        margin: 2mm 0;
+        padding: 0 8mm;
         font-size: 13px;
         page-break-after: avoid;
         text-align: center;
+        font-weight: bold;
     }
 
+    /* Patient Info + Total Score - SIDE BY SIDE di PRINT */
     .patient-total-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -342,22 +344,26 @@ h1 {
     .patient-info {
         border: 0.5px solid #ddd;
         padding: 3mm;
-        font-size: 9px;
+        font-size: 12px;
         background-color: #f9f9f9;
     }
 
     .info-line {
         margin-bottom: 1mm;
         gap: 5px;
+        display: flex;
+        align-items: center;
     }
 
     .label {
-        min-width: 40mm;
+        min-width: 50mm;
         font-size: 9px;
+        font-weight: bold;
     }
 
     .separator {
         font-size: 9px;
+        margin: 0 3px;
     }
 
     .value {
@@ -369,7 +375,7 @@ h1 {
     }
 
     .total-section {
-        border: 1px solid #4CAF50;
+        border: 1.5px solid #4CAF50;
         padding: 3mm;
         background-color: #e8f5e9;
         border-radius: 2px;
@@ -380,21 +386,32 @@ h1 {
         margin-bottom: 1.5mm;
         font-size: 9px;
         gap: 3mm;
+        display: flex;
+        align-items: center;
     }
 
     .total-label {
         font-size: 9px;
-        min-width: 30mm;
+        font-weight: bold;
+        min-width: 50mm;
     }
 
     .total-value {
         font-size: 9px;
     }
 
+    /* SCORING TABLES - Full Width dengan margin konsisten */
     .scoring-table {
         margin: 1.5mm 8mm;
+        width: calc(100% - 16mm);
         page-break-inside: avoid;
         font-size: 9px;
+        border-collapse: collapse;
+    }
+
+    .scoring-table thead {
+        background-color: #4CAF50;
+        color: white;
     }
 
     .scoring-table th,
@@ -403,14 +420,19 @@ h1 {
         border: 0.5px solid #999;
         font-size: 9px;
         line-height: 1.1;
+        text-align: left;
     }
 
     .scoring-table th {
         padding: 1.5mm;
         font-size: 9px;
+        font-weight: bold;
     }
 
     .checkbox-label {
+        display: flex;
+        align-items: center;
+        margin: 0;
         line-height: 1.1;
     }
 
@@ -418,21 +440,25 @@ h1 {
         width: 2.5mm;
         height: 2.5mm;
         margin-right: 1.5mm;
+        flex-shrink: 0;
     }
 
     .score-col {
         width: 10mm;
+        text-align: center !important;
         font-size: 9px;
     }
 
+    /* DPJP SECTION */
     .dpjp-section {
         margin: 3mm 8mm;
-        font-size: 9px;
+        font-size: 12px;
         page-break-inside: avoid;
     }
 
     .dpjp-section p {
-        margin-bottom: 1mm;
+        margin: 0 0 1mm 0;
+        font-weight: bold;
     }
 
     .dpjp-name {
