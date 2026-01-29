@@ -1,4 +1,9 @@
 * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -355,9 +360,9 @@ h1 {
 
     /* Patient Info + Total Score SIDE BY SIDE */
     .patient-total-wrapper {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 15px !important;
         margin-bottom: 5mm;
         width: 100% !important;
         page-break-inside: avoid;
