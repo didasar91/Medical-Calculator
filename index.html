@@ -54,7 +54,7 @@
                     <thead><tr><th>Kriteria Penilaian</th><th class="score-col">Skor</th></tr></thead>
                     <tbody>
                         <tr class="section-head"><td colspan="2">Faktor Demografik</td></tr>
-                        <tr><td>Usia</td><td class="score-col" id="scoreUsia">0</td></tr>
+                        <tr><td>Usia (L: Umur | P: Umur - 10)</td><td class="score-col" id="scoreUsia">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="10" data-id="panti"> Penghuni Panti Werda (+10)</label></td><td class="score-col" id="scorePanti">0</td></tr>
                         <tr class="section-head"><td colspan="2">Penyakit Komorbid</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="30" data-id="keganasan"> Keganasan (+30)</label></td><td class="score-col" id="scoreKeganasan">0</td></tr>
@@ -83,6 +83,17 @@
 
         <div id="calc-natrium-content" style="display:none;">
             <h2 class="form-title">Koreksi Hiponatremia (Adrogué-Madias)</h2>
+            <div class="input-form screen-only">
+                <div class="form-group"><label>Na+ Serum (mEq/L):</label><input type="number" id="naSerum"></div>
+                <div class="form-group"><label>Target Δ Na+/24j:</label><input type="number" id="targetNa" value="8"></div>
+                <div class="form-group"><label>Jenis Cairan Infus:</label>
+                    <select id="naInfus">
+                        <option value="513">NaCl 3% (513 mEq/L)</option>
+                        <option value="154">NaCl 0.9% (154 mEq/L)</option>
+                        <option value="77">NaCl 0.45% (77 mEq/L)</option>
+                    </select>
+                </div>
+            </div>
             <div class="natrium-result-table">
                 <table class="scoring-table">
                     <thead><tr><th>Parameter Koreksi</th><th>Hasil Perhitungan</th></tr></thead>
