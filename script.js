@@ -1,182 +1,126 @@
-// Format tanggal ke dd/mm/yyyy
-function formatTanggal(dateString) {
-    if (!dateString) return '-';
+let currentMode = 'psi';
+
+function showCalculator(mode) {
+    currentMode = mode;
+    document.body.className = 'mode-' + mode;
+    const isPsi = (mode === 'psi');
     
-    const [year, month, day] = dateString.split('-');
-    return `${day}/${month}/${year}`;
+    document.getElementById('calc-psi-content').style.display = isPsi ? 'block' : 'none';
+    document.getElementById('calc-natrium-content').style.display = !isPsi ? 'block' : 'none';
+    
+    document.getElementById('psi-output-box').style.display = isPsi ? 'block' : 'none';
+    document.getElementById('natrium-output-box').style.display = !isPsi ? 'block' : 'none';
+    
+    document.getElementById('btn-psi').classList.toggle('active', isPsi);
+    document.getElementById('btn-natrium').classList.toggle('active', !isPsi);
 }
 
-// Update display values untuk print
-function updateDisplay() {
-    document.getElementById('displayNama').textContent = document.getElementById('nama').value || '-';
-    document.getElementById('displayTanggalLahir').textContent = formatTanggal(document.getElementById('tanggalLahir').value);
-    document.getElementById('displayUmur').textContent = (document.getElementById('umur').value || '-') + (document.getElementById('umur').value ? ' Tahun' : '');
-    document.getElementById('displayNoMR').textContent = document.getElementById('noMR').value || '-';
-    document.getElementById('displayTanggalAssessment').textContent = formatTanggal(document.getElementById('tanggalAssessment').value);
-    document.getElementById('displayJenisKelamin').textContent = document.getElementById('jenisKelamin').value || '-';
-}
+document.getElementById('nama').addEventListener('input', e => document.getElementById('displayNama').textContent = e.target.value || '-');
+document.getElementById('noMR').addEventListener('input', e => document.getElementById('displayNoMR').textContent = e.target.value || '-');
+document.getElementById('inputDPJP').addEventListener('input', e => document.getElementById('displayDPJP').textContent = e.target.value || '');
+document.getElementById('tglAsesmen').addEventListener('change', e => document.getElementById('displayTglAsesmen').textContent = e.target.value || '-');
 
-// Calculate age from date of birth
-document.getElementById('tanggalLahir').addEventListener('change', function() {
-    const dob = new Date(this.value);
+document.getElementById('tglLahir').addEventListener('change', updateStats);
+document.getElementById('jk').addEventListener('change', updateStats);
+['bb', 'naSerum', 'naInfus', 'targetNa'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calculateNatrium);
+});
+
+function updateStats() {
+    const tgl = document.getElementById('tglLahir').value;
+    if(!tgl) return;
+    const dob = new Date(tgl);
     const today = new Date();
     let age = today.getFullYear() - dob.getFullYear();
-    const monthDiff = today.getMonth() - dob.getMonth();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
     
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-        age--;
-    }
+    document.getElementById('displayTglLahir').textContent = tgl;
+    document.getElementById('displayUmur').textContent = age + " Tahun";
+    const jk = document.getElementById('jk').value;
+    document.getElementById('scoreUsia').textContent = (jk === 'P') ? Math.max(0, age - 10) : age;
     
-    document.getElementById('umur').value = age;
-    updateDisplay();
-    calculateTotal();
-});
-
-// Update display ketika input berubah
-document.getElementById('nama').addEventListener('input', updateDisplay);
-document.getElementById('noMR').addEventListener('input', updateDisplay);
-document.getElementById('tanggalAssessment').addEventListener('change', updateDisplay);
-document.getElementById('jenisKelamin').addEventListener('change', function() {
-    updateDisplay();
-    calculateTotal();
-});
-
-// Calculate age score based on gender
-function calculateAgeScore() {
-    const age = parseInt(document.getElementById('umur').value) || 0;
-    const gender = document.getElementById('jenisKelamin').value;
-    
-    let ageScore = 0;
-    if (gender === 'Laki-laki') {
-        ageScore = age;
-    } else if (gender === 'Perempuan') {
-        ageScore = Math.max(0, age - 10);
-    }
-    
-    document.getElementById('scoreUsia').textContent = ageScore;
-    return ageScore;
+    calculatePSI();
+    calculateNatrium();
 }
 
-// Handle checkbox changes
-document.querySelectorAll('.score-checkbox').forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-        const score = this.checked ? parseInt(this.dataset.score) : 0;
-        const field = this.dataset.field;
-        const scoreElement = document.getElementById('score' + field.charAt(0).toUpperCase() + field.slice(1));
-        scoreElement.textContent = score;
-        calculateTotal();
+document.querySelectorAll('.psi-check').forEach(box => {
+    box.addEventListener('change', () => {
+        const id = box.dataset.id;
+        const scoreId = 'score' + id.charAt(0).toUpperCase() + id.slice(1);
+        const el = document.getElementById(scoreId);
+        if(el) el.textContent = box.checked ? box.dataset.score : 0;
+        calculatePSI();
     });
 });
 
-// Calculate total score and risk classification
-function calculateTotal() {
-    let total = calculateAgeScore();
-    
-    document.querySelectorAll('.score-checkbox').forEach(checkbox => {
-        if (checkbox.checked) {
-            total += parseInt(checkbox.dataset.score);
-        }
-    });
-    
+function calculatePSI() {
+    let total = parseInt(document.getElementById('scoreUsia').textContent) || 0;
+    document.querySelectorAll('.psi-check').forEach(c => { if(c.checked) total += parseInt(c.dataset.score); });
     document.getElementById('totalScore').textContent = total;
     
-    // Determine risk classification based on PSI score
-    let risiko, kelasRisiko, mortalityRate;
+    let kelas = "I", mort = "0.1%";
+    if(total > 130) { kelas = "V"; mort = "29.2%"; }
+    else if(total >= 91) { kelas = "IV"; mort = "8.2%"; }
+    else if(total >= 71) { kelas = "III"; mort = "2.8%"; }
+    else if(total > 0) { kelas = "II"; mort = "0.6%"; }
     
-    if (total <= 70) {
-        risiko = 'Rendah';
-        kelasRisiko = 'II';
-        mortalityRate = '0.6%';
-    } else if (total >= 71 && total <= 90) {
-        risiko = 'Rendah';
-        kelasRisiko = 'III';
-        mortalityRate = '2.8%';
-    } else if (total >= 91 && total <= 130) {
-        risiko = 'Sedang';
-        kelasRisiko = 'IV';
-        mortalityRate = '8.2%';
-    } else if (total > 130) {
-        risiko = 'Berat';
-        kelasRisiko = 'V';
-        mortalityRate = '29.2%';
-    }
-    
-    document.getElementById('risiko').textContent = risiko;
-    document.getElementById('kelasRisiko').textContent = kelasRisiko;
-    document.getElementById('mortalityRate').textContent = mortalityRate;
+    document.getElementById('kelasRisiko').textContent = kelas;
+    document.getElementById('mortalityRate').textContent = mort;
 }
 
-// Update DPJP display
-document.getElementById('namaDPJP').addEventListener('input', function() {
-    document.getElementById('dpjpDisplay').textContent = this.value;
-});
+function calculateNatrium() {
+    const bb = parseFloat(document.getElementById('bb').value);
+    const naSerum = parseFloat(document.getElementById('naSerum').value);
+    const naInfus = parseFloat(document.getElementById('naInfus').value);
+    const target = parseFloat(document.getElementById('targetNa').value) || 8;
+    const jk = document.getElementById('jk').value;
+    const ageText = document.getElementById('displayUmur').textContent;
+    const age = parseInt(ageText) || 30;
 
-// Print and Download dengan nama file otomatis
-// Perbaikan fungsi Print and Download dengan Validasi Lengkap
+    if(!bb || !naSerum || !jk) return;
+
+    let factor = 0.6; 
+    if (age > 18) {
+        if (jk === 'P') {
+            factor = (age > 65) ? 0.45 : 0.5;
+        } else {
+            factor = (age > 65) ? 0.5 : 0.6;
+        }
+    }
+    
+    const tbw = bb * factor;
+    const deltaPerLiter = (naInfus - naSerum) / (tbw + 1);
+    const totalVolumeMl = (target / deltaPerLiter) * 1000;
+    const botolCount = Math.ceil(totalVolumeMl / 500); 
+    const speed = totalVolumeMl / 24;
+
+    const selectInfus = document.getElementById('naInfus');
+    const namaCairan = selectInfus.options[selectInfus.selectedIndex].text.split(' (')[0];
+
+    document.getElementById('txtTBW').textContent = tbw.toFixed(1) + " L";
+    document.getElementById('txtDelta').textContent = deltaPerLiter.toFixed(2) + " mEq/L";
+    document.getElementById('txtTotalVol').textContent = Math.round(totalVolumeMl) + " mL";
+    document.getElementById('txtBotolDisplay').textContent = botolCount + " Botol " + namaCairan + " 500 mL";
+    document.getElementById('txtKecepatan').textContent = speed.toFixed(1) + " mL/jam";
+    
+    document.getElementById('displayDelta').textContent = deltaPerLiter.toFixed(2);
+    document.getElementById('displayBotol').textContent = botolCount + " Botol";
+}
+
 function printAndDownload() {
-    // 1. Ambil semua nilai input untuk validasi
     const nama = document.getElementById('nama').value;
-    const tglLahir = document.getElementById('tanggalLahir').value;
     const noMR = document.getElementById('noMR').value;
-    const tglAssessment = document.getElementById('tanggalAssessment').value;
-    const jenisKelamin = document.getElementById('jenisKelamin').value;
-    const namaDPJP = document.getElementById('namaDPJP').value;
+    const dpjp = document.getElementById('inputDPJP').value;
 
-    // 2. Cek apakah semua field utama sudah diisi
-    if (!nama || !tglLahir || !noMR || !tglAssessment || !jenisKelamin || !namaDPJP) {
-        alert("Mohon lengkapi semua data pasien dan nama DPJP sebelum mencetak.");
+    if (!nama || !noMR || !dpjp) {
+        alert("Lengkapi Data Pasien dan Nama DPJP.");
         return;
     }
-
-    // 3. Validasi No RM: Harus berisi angka dan tepat 10 digit
-    const noMRRegex = /^\d{10}$/; 
-    if (!noMRRegex.test(noMR)) {
-        alert("Nomor Medical Record wajib berisi 10 digit angka.");
+    if (noMR.length !== 10) {
+        alert("No. MR harus tepat 10 digit.");
         return;
     }
-
-    // 4. Update tampilan display sebelum dicetak
-    updateDisplay();
-
-    // 5. Set Judul Dokumen otomatis untuk nama file Save PDF
-    // Format: "Nama Pasien - PSI Score"
-    const originalTitle = document.title;
-    document.title = `${nama} - PSI Score`;
-
-    // 6. Trigger jendela print
+    document.title = nama + " - " + currentMode.toUpperCase();
     window.print();
-
-    // 7. Kembalikan judul halaman ke aslinya setelah print selesai
-    setTimeout(() => {
-        document.title = originalTitle;
-    }, 1000);
 }
-
-// Reset form
-function resetForm() {
-    if (confirm('Apakah Anda yakin ingin mereset semua data?')) {
-        document.querySelectorAll('input[type="text"], input[type="date"], input[type="number"]').forEach(input => {
-            input.value = '';
-        });
-        document.getElementById('jenisKelamin').value = '';
-        document.querySelectorAll('.score-checkbox').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        document.querySelectorAll('span[id^="score"]').forEach(span => {
-            span.textContent = '0';
-        });
-        document.getElementById('totalScore').textContent = '0';
-        document.getElementById('risiko').textContent = '-';
-        document.getElementById('kelasRisiko').textContent = '-';
-        document.getElementById('mortalityRate').textContent = '-';
-        document.getElementById('dpjpDisplay').textContent = '';
-        document.getElementById('umur').value = '';
-        updateDisplay();
-    }
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    calculateTotal();
-    updateDisplay();
-});
