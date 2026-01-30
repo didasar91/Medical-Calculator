@@ -33,18 +33,18 @@
             </div>
             
             <div class="total-section natrium-only-result" style="display:none;">
-                <div class="total-line"><span class="total-label">TBW:</span><span id="displayTBW">0</span> L</div>
                 <div class="total-line"><span class="total-label">Δ Na+ (1L):</span><span id="displayDelta">0</span> mEq/L</div>
+                <div class="total-line"><span class="total-label">Kebutuhan:</span><span id="displayFlask">0</span> Flask</div>
             </div>
         </div>
 
         <div class="input-form screen-only">
             <div class="form-group"><label>Nama Pasien:</label><input type="text" id="nama"></div>
-            <div class="form-group"><label>No. Medical Record:</label><input type="text" id="noMR" maxlength="10"></div>
+            <div class="form-group"><label>No. MR:</label><input type="text" id="noMR" maxlength="10"></div>
             <div class="form-group"><label>Tanggal Lahir:</label><input type="date" id="tglLahir"></div>
             <div class="form-group"><label>Jenis Kelamin:</label><select id="jk"><option value="">Pilih</option><option value="L">Laki-laki</option><option value="P">Perempuan</option></select></div>
             <div class="form-group"><label>Tgl Assessment:</label><input type="date" id="tglAsesmen"></div>
-            <div class="form-group"><label>Berat Badan (kg):</label><input type="number" id="bb" placeholder="Wajib untuk Natrium"></div>
+            <div class="form-group"><label>Berat Badan (kg):</label><input type="number" id="bb"></div>
         </div>
 
         <div id="calc-psi-content">
@@ -54,24 +54,21 @@
                     <thead><tr><th>Kriteria Penilaian</th><th class="score-col">Skor</th></tr></thead>
                     <tbody>
                         <tr class="section-head"><td colspan="2">Faktor Demografik</td></tr>
-                        <tr><td>Usia (L: Umur | P: Umur - 10)</td><td class="score-col" id="scoreUsia">0</td></tr>
+                        <tr><td>Usia</td><td class="score-col" id="scoreUsia">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="10" data-id="panti"> Penghuni Panti Werda (+10)</label></td><td class="score-col" id="scorePanti">0</td></tr>
-                        
-                        <tr class="section-head"><td colspan="2">Penyakit Komorbid (+10 s/d +30)</td></tr>
+                        <tr class="section-head"><td colspan="2">Penyakit Komorbid</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="30" data-id="keganasan"> Keganasan (+30)</label></td><td class="score-col" id="scoreKeganasan">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="20" data-id="hati"> Penyakit Hati (+20)</label></td><td class="score-col" id="scoreHati">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="10" data-id="jantung"> Gagal Jantung Kongestif (+10)</label></td><td class="score-col" id="scoreJantung">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="10" data-id="serebro"> Penyakit Serebrovaskular (+10)</label></td><td class="score-col" id="scoreSerebro">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="10" data-id="ginjal"> Penyakit Ginjal (+10)</label></td><td class="score-col" id="scoreGinjal">0</td></tr>
-
-                        <tr class="section-head"><td colspan="2">Pemeriksaan Fisis (+10 s/d +20)</td></tr>
+                        <tr class="section-head"><td colspan="2">Pemeriksaan Fisis</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="20" data-id="kesadaran"> Gangguan Kesadaran (+20)</label></td><td class="score-col" id="scoreKesadaran">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="20" data-id="nafas"> Frekuensi Nafas > 30x/menit (+20)</label></td><td class="score-col" id="scoreNafas">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="20" data-id="sistolik"> Tekanan Darah Sistolik < 90 mmHg (+20)</label></td><td class="score-col" id="scoreSistolik">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="15" data-id="suhu"> Suhu < 35°C atau > 40°C (+15)</label></td><td class="score-col" id="scoreSuhu">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="10" data-id="nadi"> Frekuensi Nadi > 125x/menit (+10)</label></td><td class="score-col" id="scoreNadi">0</td></tr>
-
-                        <tr class="section-head"><td colspan="2">Hasil Laboratorium (+10 s/d +30)</td></tr>
+                        <tr class="section-head"><td colspan="2">Hasil Laboratorium</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="30" data-id="ph"> pH Arteri < 7.35 (+30)</label></td><td class="score-col" id="scorePh">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="20" data-id="ureum"> Ureum > 64.2 mg/dL (+20)</label></td><td class="score-col" id="scoreUreum">0</td></tr>
                         <tr><td><label class="checkbox-label"><input type="checkbox" class="psi-check" data-score="20" data-id="natrium"> Natrium < 130 mEq/L (+20)</label></td><td class="score-col" id="scoreNatriumCheck">0</td></tr>
@@ -87,45 +84,35 @@
         <div id="calc-natrium-content" style="display:none;">
             <h2 class="form-title">Koreksi Hiponatremia (Adrogué-Madias)</h2>
             <div class="input-form screen-only">
-                <div class="form-group">
-                    <label>Na+ Serum Pasien (mEq/L):</label>
-                    <input type="number" id="naSerum" placeholder="Contoh: 120">
-                </div>
-                <div class="form-group">
-                    <label>Jenis Cairan Infus:</label>
+                <div class="form-group"><label>Na+ Serum Pasien (mEq/L):</label><input type="number" id="naSerum"></div>
+                <div class="form-group"><label>Target Kenaikan Na+ (mEq/L/24 jam):</label><input type="number" id="targetNa" value="8"></div>
+                <div class="form-group"><label>Jenis Cairan Infus:</label>
                     <select id="naInfus">
                         <option value="513">NaCl 3% (513 mEq/L)</option>
                         <option value="154">NaCl 0.9% (154 mEq/L)</option>
-                        <option value="130">Ringer Laktat (130 mEq/L)</option>
                         <option value="77">NaCl 0.45% (77 mEq/L)</option>
                     </select>
                 </div>
             </div>
             <div class="natrium-result-table">
                 <table class="scoring-table">
-                    <thead><tr><th>Parameter Koreksi</th><th>Hasil</th></tr></thead>
+                    <thead><tr><th>Parameter Perhitungan</th><th>Hasil</th></tr></thead>
                     <tbody>
-                        <tr><td>Faktor TBW (Berdasarkan JK & Usia)</td><td><span id="txtFaktor">-</span></td></tr>
                         <tr><td>Total Body Water (TBW)</td><td><span id="txtTBW">0</span> L</td></tr>
-                        <tr style="background:#e3f2fd; font-weight:bold;">
-                            <td>Perubahan Na+ per 1 L Cairan</td>
-                            <td><span id="txtDelta">0</span> mEq/L</td>
-                        </tr>
+                        <tr><td>Δ Na+ Serum per 1 Liter Cairan</td><td><span id="txtDelta">0</span> mEq/L</td></tr>
+                        <tr><td>Total Kebutuhan Cairan (untuk target)</td><td><span id="txtTotalVol">0</span> mL</td></tr>
+                        <tr style="background:#e3f2fd; font-weight:bold;"><td>Jumlah Botol/Flask (sediaan 500 ml)</td><td><span id="txtFlask">0</span> Flask</td></tr>
+                        <tr style="background:#fffde7;"><td>Kecepatan Pemberian</td><td><span id="txtKecepatan">0</span> mL/jam</td></tr>
                     </tbody>
                 </table>
-                <p style="font-size:11px; color:#666; margin-top:10px;">*Rumus: Perubahan Na+ = (Na Infus - Na Serum) / (TBW + 1).</p>
+                <p class="disclaimer">*Target koreksi lazim: 8-10 mEq/L per 24 jam untuk mencegah Osmotic Demyelination Syndrome.</p>
             </div>
         </div>
 
         <div class="dpjp-section">
             <p>Diketahui oleh,</p>
-            <input type="text" id="inputDPJP" placeholder="Nama Dokter Penanggung Jawab" class="screen-only dpjp-input">
+            <input type="text" id="inputDPJP" placeholder="Nama DPJP" class="screen-only dpjp-input">
             <div id="displayDPJP" class="dpjp-name"></div>
-        </div>
-
-        <div class="button-footer screen-only">
-            <button onclick="window.print()" class="btn-primary">Print / Simpan PDF</button>
-            <button onclick="location.reload()" class="btn-secondary">Reset Data</button>
         </div>
     </div>
     <script src="script.js"></script>
