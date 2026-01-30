@@ -26,13 +26,13 @@
                 <div class="info-line"><span class="label">Tgl Assessment</span><span>:</span><span id="displayTglAsesmen">-</span></div>
             </div>
 
-            <div id="psi-output-box" class="total-section">
+            <div id="psi-output-box" class="total-section psi-box">
                 <div class="total-line"><span class="total-label">PSI Score:</span><span id="totalScore">0</span></div>
                 <div class="total-line"><span class="total-label">Kelas Risiko:</span><span id="kelasRisiko">-</span></div>
                 <div class="total-line"><span class="total-label">Mortality:</span><span id="mortalityRate">-</span></div>
             </div>
             
-            <div id="natrium-output-box" class="total-section" style="display:none; border-color: #000;">
+            <div id="natrium-output-box" class="total-section natrium-box" style="display:none;">
                 <div class="total-line"><span class="total-label">Δ Na+ (1L):</span><span id="displayDelta">0</span> mEq/L</div>
                 <div class="total-line"><span class="total-label">Kebutuhan:</span><span id="displayBotol">0 Botol</span></div>
             </div>
@@ -83,17 +83,6 @@
 
         <div id="calc-natrium-content" style="display:none;">
             <h2 class="form-title">Koreksi Hiponatremia (Adrogué-Madias)</h2>
-            <div class="input-form screen-only">
-                <div class="form-group"><label>Na+ Serum (mEq/L):</label><input type="number" id="naSerum"></div>
-                <div class="form-group"><label>Target Δ Na+/24j:</label><input type="number" id="targetNa" value="8"></div>
-                <div class="form-group"><label>Jenis Cairan Infus:</label>
-                    <select id="naInfus">
-                        <option value="513">NaCl 3% (513 mEq/L)</option>
-                        <option value="154">NaCl 0.9% (154 mEq/L)</option>
-                        <option value="77">NaCl 0.45% (77 mEq/L)</option>
-                    </select>
-                </div>
-            </div>
             <div class="natrium-result-table">
                 <table class="scoring-table">
                     <thead><tr><th>Parameter Koreksi</th><th>Hasil Perhitungan</th></tr></thead>
@@ -101,8 +90,8 @@
                         <tr><td>Total Body Water (TBW)</td><td><span id="txtTBW">0</span></td></tr>
                         <tr><td>Δ Na+ Serum per 1 Liter Cairan</td><td><span id="txtDelta">0</span></td></tr>
                         <tr><td>Total Volume Cairan Dibutuhkan</td><td><span id="txtTotalVol">0</span></td></tr>
-                        <tr style="background:#f9f9f9; font-weight:bold;"><td>Kebutuhan Botol Sediaan (500 mL)</td><td><span id="txtBotolDisplay">0 Botol</span></td></tr>
-                        <tr style="background:#f9f9f9;"><td>Kecepatan Pemberian Infus</td><td><span id="txtKecepatan">0</span></td></tr>
+                        <tr class="highlight-natrium"><td>Kebutuhan Botol Sediaan (500 mL)</td><td><span id="txtBotolDisplay">0 Botol</span></td></tr>
+                        <tr class="highlight-natrium"><td>Kecepatan Pemberian Infus</td><td><span id="txtKecepatan">0</span></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -110,8 +99,7 @@
 
         <div class="dpjp-section">
             <p>Diketahui oleh,</p>
-            <input type="text" id="inputDPJP" placeholder="Nama Dokter*" class="screen-only dpjp-input">
-            <div id="displayDPJP" class="dpjp-name"></div>
+            <div class="dpjp-name" id="displayDPJP"></div>
         </div>
 
         <div class="screen-only button-container">
