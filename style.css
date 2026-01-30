@@ -47,6 +47,22 @@ body { font-family: 'Arial', sans-serif; line-height: 1.2; padding: 10px; backgr
 .highlight-natrium { background-color: #e3f2fd !important; font-weight: bold; }
 .form-title { text-align: center; margin: 10px 0; font-size: 1.2em; font-weight: bold; border-bottom: 2px solid #4CAF50; }
 
+/* Update di style.css */
+.warning-box {
+    background-color: #fff3f3;
+    color: #d32f2f;
+    border-left: 5px solid #d32f2f !important;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+@media print {
+    #table-hari-2[style*="display: none"] { display: none !important; }
+    .warning-box { border: 1px solid #d32f2f !important; }
+}
+
 /* DPJP */
 .dpjp-section { margin-top: 20px; text-align: right; }
 .dpjp-name { margin-top: 40px; font-weight: bold; border-bottom: 1px solid #000; display: inline-block; min-width: 200px; text-align: center; }
