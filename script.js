@@ -1,4 +1,7 @@
+let currentMode = 'psi';
+
 function showCalculator(mode) {
+    currentMode = mode;
     document.body.className = 'mode-' + mode;
     const isPsi = (mode === 'psi');
     document.getElementById('calc-psi-content').style.display = isPsi ? 'block' : 'none';
@@ -9,6 +12,7 @@ function showCalculator(mode) {
     document.getElementById('btn-natrium').classList.toggle('active', !isPsi);
 }
 
+// Data Binding
 document.getElementById('nama').addEventListener('input', e => document.getElementById('displayNama').textContent = e.target.value || '-');
 document.getElementById('noMR').addEventListener('input', e => document.getElementById('displayNoMR').textContent = e.target.value || '-');
 document.getElementById('inputDPJP').addEventListener('input', e => document.getElementById('displayDPJP').textContent = e.target.value || '');
@@ -23,15 +27,24 @@ document.getElementById('jk').addEventListener('change', updateStats);
 function updateStats() {
     const tgl = document.getElementById('tglLahir').value;
     if(!tgl) return;
-    const age = new Date().getFullYear() - new Date(tgl).getFullYear();
+    
+    const dob = new Date(tgl);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    
     document.getElementById('displayTglLahir').textContent = tgl;
     document.getElementById('displayUmur').textContent = age + " Tahun";
     const jk = document.getElementById('jk').value;
+    
     document.getElementById('scoreUsia').textContent = (jk === 'P') ? Math.max(0, age - 10) : age;
+    
     calculatePSI();
     calculateNatrium();
 }
 
+// Checklist PSI
 document.querySelectorAll('.psi-check').forEach(box => {
     box.addEventListener('change', () => {
         const id = box.dataset.id;
@@ -46,22 +59,26 @@ function calculatePSI() {
     let total = parseInt(document.getElementById('scoreUsia').textContent) || 0;
     document.querySelectorAll('.psi-check').forEach(c => { if(c.checked) total += parseInt(c.dataset.score); });
     document.getElementById('totalScore').textContent = total;
+    
     let kelas = "I", mort = "0.1%";
     if(total > 130) { kelas = "V"; mort = "29.2%"; }
     else if(total >= 91) { kelas = "IV"; mort = "8.2%"; }
     else if(total >= 71) { kelas = "III"; mort = "2.8%"; }
     else if(total > 0) { kelas = "II"; mort = "0.6%"; }
+    
     document.getElementById('kelasRisiko').textContent = kelas;
     document.getElementById('mortalityRate').textContent = mort;
 }
 
+// Formula Adrogué-Madias
 function calculateNatrium() {
     const bb = parseFloat(document.getElementById('bb').value);
     const naSerum = parseFloat(document.getElementById('naSerum').value);
     const naInfus = parseFloat(document.getElementById('naInfus').value);
     const target = parseFloat(document.getElementById('targetNa').value) || 8;
     const jk = document.getElementById('jk').value;
-    const age = parseInt(document.getElementById('displayUmur').textContent) || 30;
+    const ageText = document.getElementById('displayUmur').textContent;
+    const age = parseInt(ageText) || 30;
 
     if(!bb || !naSerum || !jk) return;
 
@@ -70,17 +87,44 @@ function calculateNatrium() {
     
     const tbw = bb * factor;
     const deltaPerLiter = (naInfus - naSerum) / (tbw + 1);
-    const totalVolumeLtr = target / deltaPerLiter;
-    const totalVolumeMl = totalVolumeLtr * 1000;
-    const flaskCount = totalVolumeMl / 500;
+    const totalVolumeMl = (target / deltaPerLiter) * 1000;
+    
+    // PEMBULATAN KE ATAS UNTUK BOTOL
+    const botolCount = Math.ceil(totalVolumeMl / 500); 
     const speed = totalVolumeMl / 24;
+
+    const selectInfus = document.getElementById('naInfus');
+    const namaCairan = selectInfus.options[selectInfus.selectedIndex].text.split(' (')[0];
 
     document.getElementById('txtTBW').textContent = tbw.toFixed(1);
     document.getElementById('txtDelta').textContent = deltaPerLiter.toFixed(2);
-    document.getElementById('txtTotalVol').textContent = Math.round(totalVolumeMl);
-    document.getElementById('txtFlask').textContent = flaskCount.toFixed(2);
+    document.getElementById('txtTotalVol').textContent = Math.round(totalVolumeMl) + " mL";
+    document.getElementById('txtBotolDisplay').textContent = botolCount + " Botol " + namaCairan;
     document.getElementById('txtKecepatan').textContent = speed.toFixed(1) + " mL/jam";
     
     document.getElementById('displayDelta').textContent = deltaPerLiter.toFixed(2);
-    document.getElementById('displayFlask').textContent = flaskCount.toFixed(1);
+    document.getElementById('displayBotol').textContent = botolCount;
+}
+
+// VALIDASI INPUT SEBELUM PRINT
+function printAndDownload() {
+    const nama = document.getElementById('nama').value;
+    const noMR = document.getElementById('noMR').value;
+    const tglLahir = document.getElementById('tglLahir').value;
+    const jk = document.getElementById('jk').value;
+    const bb = document.getElementById('bb').value;
+    const dpjp = document.getElementById('inputDPJP').value;
+
+    if (!nama || !noMR || !tglLahir || !jk || !bb || !dpjp) {
+        alert("Mohon lengkapi semua data pasien (termasuk Berat Badan) dan Nama DPJP.");
+        return;
+    }
+
+    if (noMR.length !== 10 || isNaN(noMR)) {
+        alert("Nomor Medical Record harus berupa 10 digit angka.");
+        return;
+    }
+
+    document.title = nama + " - " + currentMode.toUpperCase();
+    window.print();
 }
