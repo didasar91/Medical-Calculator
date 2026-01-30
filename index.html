@@ -3,348 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSI Score Calculator - Murni Teguh Memorial Hospital</title>
+    <title>Medical Calculator - Murni Teguh Memorial Hospital</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div class="screen-only">
-            <h1>Pneumonia Severity Index (PSI) Calculator</h1>
-            <p class="subtitle">Murni Teguh Memorial Hospital</p>
+        <div class="screen-only menu-container">
+            <button onclick="showCalculator('psi')" id="btn-psi" class="btn-tab active">PSI Score</button>
+            <button onclick="showCalculator('natrium')" id="id-btn-natrium" class="btn-tab">Koreksi Natrium</button>
         </div>
 
         <div id="printableArea">
-            <!-- Header untuk print -->
             <div class="print-header">
                 <img src="https://github.com/didasar91/PSI-Score-Calculator/blob/main/header.jpg?raw=true" alt="Murni Teguh Memorial Hospital" class="header-image">
             </div>
 
-            <!-- Wrapper untuk Content -->
             <div class="printable-wrapper">
                 
-                <h2 class="form-title">Pneumonia Severity Index</h2>
+                <div id="calc-psi-content">
+                    <h2 class="form-title">Pneumonia Severity Index</h2>
+                    <div id="shared-patient-info" class="patient-total-wrapper">
+                        <div class="patient-info">
+                            <div class="info-line"><span class="label">Nama</span><span class="separator">:</span><span class="value displayNama">-</span></div>
+                            <div class="info-line"><span class="label">Tgl Lahir</span><span class="separator">:</span><span class="value displayTanggalLahir">-</span></div>
+                            <div class="info-line"><span class="label">Umur</span><span class="separator">:</span><span class="value displayUmur">-</span></div>
+                            <div class="info-line"><span class="label">No. MR</span><span class="separator">:</span><span class="value displayNoMR">-</span></div>
+                            <div class="info-line"><span class="label">Tgl Assessment</span><span class="separator">:</span><span class="value displayTanggalAssessment">-</span></div>
+                        </div>
 
-                <!-- Data Pasien dan Total Score - Side by Side -->
-                <div class="patient-total-wrapper">
-                    <div class="patient-info">
-                        <div class="info-line">
-                            <span class="label">Nama</span>
-                            <span class="separator">:</span>
-                            <span class="value" id="displayNama">-</span>
-                        </div>
-                        <div class="info-line">
-                            <span class="label">Tanggal Lahir</span>
-                            <span class="separator">:</span>
-                            <span class="value" id="displayTanggalLahir">-</span>
-                        </div>
-                        <div class="info-line">
-                            <span class="label">Umur</span>
-                            <span class="separator">:</span>
-                            <span class="value" id="displayUmur">-</span>
-                        </div>
-                        <div class="info-line">
-                            <span class="label">No. Medical Record</span>
-                            <span class="separator">:</span>
-                            <span class="value" id="displayNoMR">-</span>
-                        </div>
-                        <div class="info-line">
-                            <span class="label">Tanggal Assessment</span>
-                            <span class="separator">:</span>
-                            <span class="value" id="displayTanggalAssessment">-</span>
-                        </div>
-                        <div class="info-line">
-                            <span class="label">Jenis Kelamin</span>
-                            <span class="separator">:</span>
-                            <span class="value" id="displayJenisKelamin">-</span>
+                        <div class="total-section psi-only-result">
+                            <div class="total-line"><span class="total-label">Total PSI Score:</span><span class="total-value" id="totalScore">0</span></div>
+                            <div class="total-line"><span class="total-label">Kelas Risiko:</span><span class="total-value" id="kelasRisiko">-</span></div>
+                            <div class="total-line"><span class="total-label">Mortality:</span><span class="total-value" id="mortalityRate">-</span></div>
                         </div>
                     </div>
 
-                    <div class="total-section">
-                        <div class="total-line">
-                            <span class="total-label">Total PSI Score:</span>
-                            <span class="total-value" id="totalScore">0</span>
-                        </div>
-                        <div class="total-line">
-                            <span class="total-label">Risiko:</span>
-                            <span class="total-value" id="risiko">-</span>
-                        </div>
-                        <div class="total-line">
-                            <span class="total-label">Kelas Risiko:</span>
-                            <span class="total-value" id="kelasRisiko">-</span>
-                        </div>
-                        <div class="total-line">
-                            <span class="total-label">Mortality Rate:</span>
-                            <span class="total-value" id="mortalityRate">-</span>
-                        </div>
+                    <div class="input-form screen-only">
+                        <div class="form-group"><label>Nama:</label><input type="text" id="nama"></div>
+                        <div class="form-group"><label>Tgl Lahir:</label><input type="date" id="tanggalLahir"></div>
+                        <div class="form-group"><label>No. MR (10 Digit):</label><input type="text" id="noMR" maxlength="10"></div>
+                        <div class="form-group"><label>Jenis Kelamin:</label><select id="jenisKelamin"><option value="">Pilih</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
+                        <div class="form-group"><label>Tgl Assessment:</label><input type="date" id="tanggalAssessment"></div>
+                        <div class="form-group"><label>Berat Badan (kg):</label><input type="number" id="beratBadan" placeholder="Untuk Koreksi Natrium"></div>
+                    </div>
+
+                    <div id="psi-tables" class="tables-wrapper">
+                        <table class="scoring-table">
+                            <thead><tr><th>Faktor Demografik & Komorbid</th><th class="score-col">Skor</th></tr></thead>
+                            <tbody>
+                                <tr><td>Penghuni Panti Werda <input type="checkbox" class="score-checkbox screen-only" data-score="10" data-field="panti"></td><td class="score-col"><span id="scorePanti">0</span></td></tr>
+                                </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <!-- Input Form Tersembunyi untuk Edit -->
-                <div class="input-form screen-only">
-                    <div class="form-group">
-                        <label>Nama:</label>
-                        <input type="text" id="nama" placeholder="Nama Lengkap Pasien">
+                <div id="calc-natrium-content" style="display: none;">
+                    <h2 class="form-title">Koreksi Hiponatremia (Adrogué-Madias)</h2>
+                    
+                    <div class="input-form screen-only">
+                        <div class="form-group">
+                            <label>Na+ Serum Pasien (mEq/L):</label>
+                            <input type="number" id="naSerum" placeholder="Contoh: 120">
+                        </div>
+                        <div class="form-group">
+                            <label>Jenis Cairan Infus:</label>
+                            <select id="naInfus">
+                                <option value="513">NaCl 3% (513 mEq/L)</option>
+                                <option value="154">NaCl 0.9% (154 mEq/L)</option>
+                                <option value="130">Ringer Laktat (130 mEq/L)</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Tanggal Lahir:</label>
-                        <input type="date" id="tanggalLahir">
-                    </div>
-                    <div class="form-group">
-                        <label>Umur:</label>
-                        <input type="number" id="umur" placeholder="Tahun" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>No. Medical Record:</label>
-                        <input type="text" id="noMR" placeholder="Contoh: 0012345678" maxlength="10">
-                    </div>
-                    <div class="form-group">
-                        <label>Tanggal Assessment:</label>
-                        <input type="date" id="tanggalAssessment">
-                    </div>
-                    <div class="form-group">
-                        <label>Jenis Kelamin:</label>
-                        <select id="jenisKelamin">
-                            <option value="">Pilih</option>
-                            <option value="Laki-laki">Laki-laki</option>
-                            <option value="Perempuan">Perempuan</option>
-                        </select>
+
+                    <div class="result-box-natrium">
+                        <table class="scoring-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter Perhitungan</th>
+                                    <th>Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Na+ Serum Pasien</td><td><span id="printNaSerum">-</span> mEq/L</td></tr>
+                                <tr><td>Cairan Koreksi</td><td><span id="printJenisCairan">-</span></td></tr>
+                                <tr><td>Total Body Water (TBW)</td><td><span id="printTBW">-</span> L</td></tr>
+                                <tr style="background-color: #e8f5e9; font-weight: bold;">
+                                    <td>Estimasi Perubahan Na+ per 1 Liter Infus</td>
+                                    <td><span id="deltaNa">0</span> mEq/L</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="disclaimer">
+                            *Rumus Adrogué-Madias: Perubahan Na+ = (Na Infus - Na Serum) / (TBW + 1).<br>
+                            *Target koreksi disarankan tidak melebihi 8-10 mEq/L dalam 24 jam.
+                        </p>
                     </div>
                 </div>
 
-                <!-- Scoring Tables Wrapper -->
-                <div class="tables-wrapper">
-                    <!-- Faktor Demografik -->
-                    <table class="scoring-table">
-                        <thead>
-                            <tr>
-                                <th>Faktor Demografik</th>
-                                <th class="score-col">Skor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Usia</td>
-                                <td class="score-col"><span id="scoreUsia">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="10" data-field="pantiWerda">
-                                        Penghuni Panti Werda
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scorePantiWerda">0</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- Penyakit Komorbid -->
-                    <table class="scoring-table">
-                        <thead>
-                            <tr>
-                                <th>Penyakit Komorbid</th>
-                                <th class="score-col">Skor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="30" data-field="keganasan">
-                                        Keganasan
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreKeganasan">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="20" data-field="penyakitHati">
-                                        Penyakit Hati
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scorePenyakitHati">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="10" data-field="jantungKongestif">
-                                        Penyakit Jantung Kongestif
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreJantungKongestif">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="10" data-field="serebroVaskular">
-                                        Penyakit Serebro Vaskular
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreSerebroVaskular">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="10" data-field="penyakitGinjal">
-                                        Penyakit Ginjal
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scorePenyakitGinjal">0</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- Penyakit Fisis -->
-                    <table class="scoring-table">
-                        <thead>
-                            <tr>
-                                <th>Penyakit Fisis</th>
-                                <th class="score-col">Skor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="20" data-field="gangguanKesadaran">
-                                        Gangguan Kesadaran
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreGangguanKesadaran">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="20" data-field="frekuensiNafas">
-                                        Frekuensi Nafas >30 x/menit
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreFrekuensiNafas">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="20" data-field="tekananDarah">
-                                        Tekanan darah Sistolik <90 mmHg
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreTekananDarah">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="15" data-field="suhuTubuh">
-                                        Suhu Tubuh <35° C atau > 40° C
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreSuhuTubuh">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="10" data-field="frekuensiNadi">
-                                        Frekuensi Nadi >125 x/menit
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreFrekuensiNadi">0</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- Hasil Lab -->
-                    <table class="scoring-table">
-                        <thead>
-                            <tr>
-                                <th>Hasil Lab</th>
-                                <th class="score-col">Skor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="30" data-field="ph">
-                                        pH <7.35
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scorePh">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="20" data-field="ureum">
-                                        Ureum > 64.2 mg/dL
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreUreum">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="20" data-field="natrium">
-                                        Natrium < 130 mEq/L
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreNatrium">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="10" data-field="glukosa">
-                                        Glukosa > 250 mg/dL
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreGlukosa">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="10" data-field="hematokrit">
-                                        Hematokrit <30%
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreHematokrit">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="10" data-field="pao2">
-                                        PaO2 darah Arteri < 60 mmHg
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scorePao2">0</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" class="score-checkbox" data-score="10" data-field="efusiPleura">
-                                        Efusi Pleura
-                                    </label>
-                                </td>
-                                <td class="score-col"><span id="scoreEfusiPleura">0</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div><!-- End tables-wrapper -->
-
-                <!-- DPJP -->
                 <div class="dpjp-section">
                     <p>Diketahui oleh,</p>
-                    <input type="text" id="namaDPJP" placeholder="Nama DPJP (contoh: dr. A, Sp.P)" class="dpjp-input screen-only">
+                    <input type="text" id="namaDPJP" placeholder="Nama DPJP" class="dpjp-input screen-only">
                     <div class="dpjp-name" id="dpjpDisplay"></div>
                 </div>
 
-            </div><!-- End printable-wrapper -->
+            </div>
         </div>
 
-        <!-- Buttons -->
         <div class="button-container screen-only">
             <button onclick="printAndDownload()" class="btn btn-primary">Print / Save PDF</button>
             <button onclick="resetForm()" class="btn btn-secondary">Reset</button>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
