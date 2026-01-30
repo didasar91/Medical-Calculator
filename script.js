@@ -15,6 +15,7 @@ function showCalculator(mode) {
     document.getElementById('btn-natrium').classList.toggle('active', !isPsi);
 }
 
+// Data Binding
 document.getElementById('nama').addEventListener('input', e => document.getElementById('displayNama').textContent = e.target.value || '-');
 document.getElementById('noMR').addEventListener('input', e => document.getElementById('displayNoMR').textContent = e.target.value || '-');
 document.getElementById('inputDPJP').addEventListener('input', e => document.getElementById('displayDPJP').textContent = e.target.value || '');
@@ -64,7 +65,6 @@ function calculatePSI() {
     else if(total >= 91) { kelas = "IV"; mort = "8.2%"; }
     else if(total >= 71) { kelas = "III"; mort = "2.8%"; }
     else if(total > 0) { kelas = "II"; mort = "0.6%"; }
-    
     document.getElementById('kelasRisiko').textContent = kelas;
     document.getElementById('mortalityRate').textContent = mort;
 }
@@ -75,18 +75,14 @@ function calculateNatrium() {
     const naInfus = parseFloat(document.getElementById('naInfus').value);
     const target = parseFloat(document.getElementById('targetNa').value) || 8;
     const jk = document.getElementById('jk').value;
-    const ageText = document.getElementById('displayUmur').textContent;
-    const age = parseInt(ageText) || 30;
+    const age = parseInt(document.getElementById('displayUmur').textContent) || 30;
 
     if(!bb || !naSerum || !jk) return;
 
-    let factor = 0.6; 
+    let factor = 0.6; // Anak/Pria
     if (age > 18) {
-        if (jk === 'P') {
-            factor = (age > 65) ? 0.45 : 0.5;
-        } else {
-            factor = (age > 65) ? 0.5 : 0.6;
-        }
+        if (jk === 'P') factor = (age > 65) ? 0.45 : 0.5;
+        else factor = (age > 65) ? 0.5 : 0.6;
     }
     
     const tbw = bb * factor;
@@ -111,16 +107,10 @@ function calculateNatrium() {
 function printAndDownload() {
     const nama = document.getElementById('nama').value;
     const noMR = document.getElementById('noMR').value;
-    const dpjp = document.getElementById('inputDPJP').value;
-
-    if (!nama || !noMR || !dpjp) {
-        alert("Lengkapi Data Pasien dan Nama DPJP.");
+    const dpjp = document.getElementById('displayDPJP').textContent;
+    if (!nama || noMR.length !== 10 || !dpjp) {
+        alert("Lengkapi Nama, No. MR (10 digit), dan Nama DPJP.");
         return;
     }
-    if (noMR.length !== 10) {
-        alert("No. MR harus tepat 10 digit.");
-        return;
-    }
-    document.title = nama + " - " + currentMode.toUpperCase();
     window.print();
 }
