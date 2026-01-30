@@ -16,6 +16,51 @@ body {
     background-color: #f5f5f5;
 }
 
+/* --- Tambahan untuk Menu Tab --- */
+.menu-container {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-bottom: 20px;
+}
+
+.btn-tab {
+    padding: 12px 25px;
+    border: none;
+    background: #e0e0e0;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px 5px 0 0;
+    transition: 0.3s;
+}
+
+.btn-tab.active {
+    background: #4CAF50;
+    color: white;
+}
+
+/* --- Hasil Natrium --- */
+.result-box-natrium {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+.disclaimer {
+    font-size: 11px;
+    font-style: italic;
+    color: #666;
+    margin-top: 10px;
+}
+
+/* Sembunyikan elemen saat print berdasarkan pilihan menu */
+@media print {
+    body.mode-psi #calc-natrium-content { display: none !important; }
+    body.mode-natrium #calc-psi-content #psi-tables,
+    body.mode-natrium .psi-only-result { display: none !important; }
+    body.mode-natrium #calc-natrium-content { display: block !important; }
+}
+
 .container {
     max-width: 900px;
     margin: 0 auto;
