@@ -7,7 +7,6 @@ function showCalculator(mode) {
     document.getElementById('calc-psi-content').style.display = isPsi ? 'block' : 'none';
     document.getElementById('calc-natrium-content').style.display = !isPsi ? 'block' : 'none';
     
-    // Summary Visibility
     document.querySelector('.natrium-summary-line').style.display = !isPsi ? 'block' : 'none';
     document.querySelector('.psi-summary-line').style.display = isPsi ? 'block' : 'none';
     
@@ -15,7 +14,7 @@ function showCalculator(mode) {
     document.getElementById('btn-natrium').classList.toggle('active', !isPsi);
 }
 
-// Data Binding & Listeners
+// Data Binding
 document.getElementById('nama').addEventListener('input', e => document.getElementById('displayNama').textContent = e.target.value || '-');
 document.getElementById('noMR').addEventListener('input', e => document.getElementById('displayNoMR').textContent = e.target.value || '-');
 document.getElementById('inputDPJP').addEventListener('input', e => document.getElementById('displayDPJP').textContent = e.target.value || '');
@@ -60,13 +59,11 @@ function calculatePSI() {
     document.querySelectorAll('.psi-check').forEach(c => { if(c.checked) total += parseInt(c.dataset.score); });
     document.getElementById('totalScore').textContent = total;
     
-    [cite_start]// Klasifikasi Risiko [cite: 49]
-    let kelas = "I", mort = "0.1%";
-    if(total > 130) { kelas = "V"; mort = "29.2%"; }
-    else if(total >= 91) { kelas = "IV"; mort = "8.2%"; }
-    else if(total >= 71) { kelas = "III"; mort = "2.8%"; }
-    else if(total > 0) { kelas = "II"; mort = "0.6%"; }
-    
+    let kelas = "I", mort = "0.1%"; [cite: 49]
+    if(total > 130) { kelas = "V"; mort = "29.2%"; } [cite: 49]
+    else if(total >= 91) { kelas = "IV"; mort = "8.2%"; } [cite: 49]
+    else if(total >= 71) { kelas = "III"; mort = "2.8%"; } [cite: 49]
+    else if(total > 0) { kelas = "II"; mort = "0.6%"; } [cite: 49]
     document.getElementById('kelasRisiko').textContent = kelas;
     document.getElementById('mortalityRate').textContent = mort;
 }
@@ -77,7 +74,8 @@ function calculateNatrium() {
     const naInfus = parseFloat(document.getElementById('naInfus').value);
     const target = parseFloat(document.getElementById('targetNa').value) || 8;
     const jk = document.getElementById('jk').value;
-    const age = parseInt(document.getElementById('displayUmur').textContent) || 30;
+    const ageText = document.getElementById('displayUmur').textContent;
+    const age = parseInt(ageText) || 30;
 
     if(!bb || !naSerum || !jk) return;
 
@@ -97,7 +95,6 @@ function calculateNatrium() {
     document.getElementById('txtDelta').textContent = deltaPerLiter.toFixed(2);
     document.getElementById('txtTotalVol').textContent = Math.round(totalVolumeMl) + " mL";
     
-    // Output Format: X Botol Cairan 500 mL
     const botolText = botolCount + " Botol " + namaCairan + " 500 mL";
     document.getElementById('txtBotolDisplay').textContent = botolText;
     document.getElementById('txtKecepatan').textContent = speed.toFixed(1) + " mL/jam";
@@ -116,10 +113,9 @@ function printAndDownload() {
         return;
     }
     if (noMR.length !== 10) {
-        alert("No. MR wajib 10 digit.");
+        alert("Nomor Medical Record harus tepat 10 digit.");
         return;
     }
-
     document.title = nama + " - " + currentMode.toUpperCase();
     window.print();
 }
