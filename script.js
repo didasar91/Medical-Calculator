@@ -151,6 +151,77 @@ function printAndDownload() {
         document.title = originalTitle;
     }, 1000);
 }
+let currentMode = 'psi';
+
+function showCalculator(mode) {
+    currentMode = mode;
+    const psiContent = document.getElementById('calc-psi-content');
+    const natriumContent = document.getElementById('calc-natrium-content');
+    const psiTab = document.getElementById('btn-psi');
+    const natriumTab = document.getElementById('id-btn-natrium');
+
+    if (mode === 'psi') {
+        psiContent.style.display = 'block';
+        natriumContent.style.display = 'none';
+        psiTab.classList.add('active');
+        natriumTab.classList.remove('active');
+        document.body.classList.add('mode-psi');
+        document.body.classList.remove('mode-natrium');
+    } else {
+        psiContent.style.display = 'block'; // Tetap block karena shared patient info ada di dalam sini
+        natriumContent.style.display = 'block';
+        psiTab.classList.remove('active');
+        natriumTab.classList.add('active');
+        document.body.classList.add('mode-natrium');
+        document.body.classList.remove('mode-psi');
+    }
+}
+
+// Rumus Natrium
+function calculateNatrium() {
+    const naSerum = parseFloat(document.getElementById('naSerum').value);
+    const naInfus = parseFloat(document.getElementById('naInfus').value);
+    const bb = parseFloat(document.getElementById('beratBadan').value);
+    const jk = document.getElementById('jenisKelamin').value;
+    const umur = parseInt(document.getElementById('umur').value) || 0;
+
+    if (!naSerum || !bb || !jk) return;
+
+    // Hitung TBW
+    let faktor = (jk === 'Laki-laki') ? 0.6 : 0.5;
+    if (umur > 65) faktor -= 0.1;
+    const tbw = bb * faktor;
+
+    const delta = (naInfus - naSerum) / (tbw + 1);
+
+    // Update Display
+    document.getElementById('deltaNa').textContent = delta.toFixed(2);
+    document.getElementById('printNaSerum').textContent = naSerum;
+    document.getElementById('printTBW').textContent = tbw.toFixed(1);
+    document.getElementById('printJenisCairan').textContent = document.getElementById('naInfus').options[document.getElementById('naInfus').selectedIndex].text;
+}
+
+// Tambahkan event listener ke input terkait natrium
+document.querySelectorAll('#naSerum, #naInfus, #beratBadan, #jenisKelamin').forEach(el => {
+    el.addEventListener('input', calculateNatrium);
+});
+
+// Update fungsi print agar mendeteksi mode
+function printAndDownload() {
+    const nama = document.getElementById('nama').value;
+    if (!nama || !document.getElementById('namaDPJP').value) {
+        alert("Lengkapi Data Pasien dan DPJP");
+        return;
+    }
+    
+    document.title = `${nama} - ${currentMode.toUpperCase()} Score`;
+    window.print();
+}
+
+// Inisialisasi awal
+document.addEventListener('DOMContentLoaded', () => {
+    showCalculator('psi');
+});
 
 // Reset form
 function resetForm() {
