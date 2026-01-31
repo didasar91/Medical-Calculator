@@ -122,14 +122,16 @@
         </div>
 
         <div class="footer-section">
-            <div class="dpjp-section">
-                <p>Diketahui oleh,</p>
-                <input type="text" id="inputDPJP" placeholder="Nama Dokter*" class="screen-only dpjp-input">
-                <div id="displayDPJP" class="dpjp-name"></div>
-            </div>
             <div class="button-container screen-only">
                 <button onclick="printAndDownload()" class="btn-action btn-print">Print / Save PDF</button>
                 <button onclick="location.reload()" class="btn-action btn-clear">Clear / Reset</button>
+            </div>
+
+            <div class="dpjp-section">
+                <p>Medan, <span id="displayTanggalPrint"></span></p>
+                <p>Diketahui oleh,</p>
+                <input type="text" id="inputDPJP" placeholder="Nama Dokter*" class="screen-only dpjp-input">
+                <div id="displayDPJP" class="dpjp-name"></div>
             </div>
         </div>
     </div>
