@@ -15,6 +15,7 @@
         <div class="screen-only menu-container">
             <button onclick="showCalculator('psi')" id="btn-psi" class="btn-tab active">PSI Score</button>
             <button onclick="showCalculator('natrium')" id="btn-natrium" class="btn-tab">Koreksi Natrium</button>
+            <button onclick="showCalculator('kalium')" id="btn-kalium" class="btn-tab">Koreksi Kalium</button>
         </div>
 
         <div class="patient-total-wrapper">
@@ -37,6 +38,12 @@
                 <div class="total-line"><span class="total-label">Total Δ Na+:</span><span id="displayDeltaTotal">0</span> mEq/L</div>
                 <div class="total-line"><span class="total-label">Status:</span><span id="displayStatus">Aman</span></div>
             </div>
+
+            <div id="kalium-output-box" class="total-section kalium-box" style="display:none;">
+                <div class="total-line"><span class="total-label">Kadar K+:</span> <span id="displayKaliumSerum">0</span> mEq/L</div>
+                <div class="total-line"><span class="total-label">Klasifikasi:</span> <span id="displayKlasifikasiK">-</span></div>
+                <div class="total-line"><span class="total-label">Kebutuhan KCl:</span> <span id="displayKebutuhanK">0</span> mEq</div>
+            </div
         </div>
 
         <div class="input-form screen-only">
@@ -97,6 +104,25 @@
             </div>
                 <div id="natrium-tables-container"></div>
             </div>
+        <div id="calc-kalium-content" style="display:none;">
+            <h2 class="form-title">Koreksi Hipokalemia (PPK MTMH)</h2>
+            <div class="input-form screen-only">
+                <div class="form-group"><label>Kalium Serum Saat Ini:</label><input type="number" id="kSerum" step="0.1" placeholder="Contoh: 2.8"></div>
+                <div class="form-group"><label>Akses Vena:</label>
+                    <select id="aksesVena">
+                        <option value="perifer">Vena Perifer</option>
+                        <option value="sentral">Vena Sentral</option>
+                    </select>
+                </div>
+        </div>
+        <div id="kalium-result-table">
+            <table class="scoring-table">
+                <thead><tr><th>Rencana Tata Laksana</th><th>Instruksi Klinis</th></tr></thead>
+                <tbody id="kalium-instructions">
+                    </tbody>
+            </table>
+        </div>
+    </div>
         
         <div class="dpjp-section">
             <p>Diketahui oleh,</p>
