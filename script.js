@@ -175,47 +175,53 @@ function calculateKalium() {
     const akses = document.getElementById('aksesVena').value;
     const container = document.getElementById('kalium-instructions');
 
-    if (!bb || isNaN(kSerum)) {
-        container.innerHTML = "";
-        return;
-    }
+    if (!bb || isNaN(kSerum)) return;
 
-    // Update ringkasan di box atas
+    // Ringkasan di box atas
     let klas = (kSerum < 2.5) ? "Berat" : (kSerum < 3.0) ? "Sedang" : (kSerum < 3.5) ? "Ringan" : "Normal";
     document.getElementById('displayKaliumSerum').textContent = kSerum;
     document.getElementById('displayKlasifikasiK').textContent = klas;
 
-    // Rumus Koreksi
     const kebutuhan = 0.3 * bb * (kTarget - kSerum);
-    const botolSediaan = Math.ceil(kebutuhan / 25);
+    const botolSediaan = Math.ceil(kebutuhan / 25); // Sediaan 25 mEq/25 mL
 
     let rows = "";
-
     if (kSerum >= kTarget) {
         rows = `<tr><td colspan="2" style="text-align:center; color:green; font-weight:bold;">Kadar Kalium sudah mencapai target.</td></tr>`;
+    } else if (kSerum >= 3.0 && kSerum < 3.5) {
+        // Hipokalemia Ringan (Oral)
+        rows += `<tr><td>Kalium Serum</td><td>${kSerum.toFixed(2)} mEq/L</td></tr>`;
+        rows += `<tr><td>Target</td><td>${kTarget.toFixed(1)} mEq/L</td></tr>`;
+        rows += `<tr><td>Terapi</td><td><strong>KCl Oral (KSR) 20 mEq 3-4 kali sehari</strong></td></tr>`;
+        rows += `<tr><td>Catatan</td><td>Edukasi diet tinggi kalium.</td></tr>`;
     } else {
-        // MENAMBAHKAN KALIUM SERUM DAN TARGET KE OUTPUT TABEL
-        rows += `<tr><td>Kalium Serum Saat Ini</td><td><strong>${kSerum.toFixed(2)} mEq/L</strong></td></tr>`;
-        rows += `<tr><td>Target Koreksi</td><td><strong>${kTarget.toFixed(1)} mEq/L</strong></td></tr>`;
-
-        if (kSerum >= 3.0 && kSerum < 3.5) {
-            rows += `
-                <tr><td>Klasifikasi</td><td>Hipokalemia Ringan</td></tr>
-                <tr><td>Terapi</td><td>KCl oral 20 mEq (KSR) 3-4 kali sehari.</td></tr>
-            `;
+        // Hipokalemia Sedang-Berat (Intravena)
+        let pelarutVol = 0;
+        let sediaanVol = kebutuhan; // Karena 1 mEq = 1 mL (25/25)
+        
+        if (akses === 'sentral') {
+            // Standar PPK: 25 mEq dalam 100 mL NaCl 0.9%
+            pelarutVol = (kebutuhan / 25) * 100;
         } else {
-            // Perhitungan Kecepatan Infus
-            let totalVol = (akses === 'sentral') ? (kebutuhan / 25) * 125 : (kebutuhan / 20) * 520;
-            const speed = (totalVol / 24).toFixed(1);
-
-            rows += `
-                <tr><td>Klasifikasi</td><td>Hipokalemia ${klas}</td></tr>
-                <tr><td>Dosis Total</td><td>${kebutuhan.toFixed(1)} mEq KCl</td></tr>
-                <tr><td>Sediaan RS</td><td><strong>${botolSediaan} Botol</strong> (25 mEq/25 mL)</td></tr>
-                <tr><td>Akses Vena</td><td>${akses === 'sentral' ? 'Vena Sentral' : 'Vena Perifer Besar'}</td></tr>
-                <tr class="highlight-natrium"><td>Kecepatan Infus</td><td><strong>${speed} mL/jam</strong></td></tr>
-            `;
+            // Standar PPK: Maks 20 mEq dalam 500 mL NaCl 0.9%
+            pelarutVol = (kebutuhan / 20) * 500;
         }
+
+        const totalVol = pelarutVol + sediaanVol;
+        const speed = (totalVol / 24).toFixed(1);
+
+        rows += `<tr><td>Kalium Serum</td><td>${kSerum.toFixed(2)} mEq/L</td></tr>`;
+        rows += `<tr><td>Target Koreksi</td><td>${kTarget.toFixed(1)} mEq/L</td></tr>`;
+        rows += `<tr><td>Dosis Total KCl</td><td><strong>${kebutuhan.toFixed(1)} mEq</strong></td></tr>`;
+        rows += `<tr><td>Sediaan RS</td><td>${botolSediaan} Botol (25 mEq / 25 mL)</td></tr>`;
+        
+        // BARIS BARU: CAIRAN CAMPURAN
+        rows += `<tr style="background:#fff3e0;"><td>Cairan Pelarut</td><td><strong>${pelarutVol.toFixed(0)} mL NaCl 0.9%</strong></td></tr>`;
+        rows += `<tr style="background:#fff3e0;"><td>Volume Total Campuran</td><td><strong>${totalVol.toFixed(0)} mL</strong></td></tr>`;
+        
+        rows += `<tr><td>Akses Vena</td><td>${akses === 'sentral' ? 'Vena Sentral' : 'Vena Perifer Besar'}</td></tr>`;
+        rows += `<tr class="highlight-natrium"><td>Kecepatan Infus</td><td><strong>${speed} mL/jam</strong></td></tr>`;
+        rows += `<tr><td>Monitoring</td><td>EKG Kontinu & Cek K+ ulang setelah koreksi selesai.</td></tr>`;
     }
     container.innerHTML = rows;
 }
