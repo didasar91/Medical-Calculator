@@ -38,7 +38,8 @@ document.getElementById('jk').addEventListener('change', updateStats);
 
 ['bb', 'naSerum', 'naTarget', 'naKecepatan', 'naInfus', 'kSerum', 'kTarget', 'aksesVena'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.addEventListener('input', calculateKalium);
+    if(el) el.addEventListener('input', () => {calculateNatrium() ; calculateKalium() ;
+    });
 });
 
 function updateStats() {
@@ -173,52 +174,48 @@ function calculateKalium() {
     const bb = parseFloat(document.getElementById('bb').value);
     const kSerum = parseFloat(document.getElementById('kSerum').value);
     const kTarget = parseFloat(document.getElementById('kTarget').value) || 3.0;
+    const akses = document.getElementById('aksesVena').value; // Mengambil nilai dari dropdown yang sudah diperbaiki
     const container = document.getElementById('kalium-instructions');
 
     if (!bb || isNaN(kSerum)) {
-        // Reset tampilan kanan atas jika BB kosong
         document.getElementById('displayKebutuhanK').textContent = "0";
         return;
     }
 
-    // 1. Hitung Kebutuhan mEq
     const kebutuhan = 0.3 * bb * (kTarget - kSerum);
-    
-    // Update Ringkasan Kanan Atas
     document.getElementById('displayKebutuhanK').textContent = kebutuhan > 0 ? kebutuhan.toFixed(1) : "0";
     document.getElementById('displayKaliumSerum').textContent = kSerum;
     
-    let klas = (kSerum < 2.5) ? "Berat" : (kSerum < 3.0) ? "Sedang" : (kSerum < 3.5) ? "Ringan" : "Normal";
-    document.getElementById('displayKlasifikasiK').textContent = klas;
-
     if (kSerum >= kTarget) {
-        container.innerHTML = `<tr><td colspan="2" style="text-align:center; color:green;">Kadar Kalium sudah mencapai target.</td></tr>`;
+        container.innerHTML = `<tr><td colspan="2" style="text-align:center;">Kadar Kalium sudah mencapai target.</td></tr>`;
         return;
     }
 
-    // 2. Hitung Sediaan (Pembulatan ke Atas)
     const jumlahBotol = Math.ceil(kebutuhan / 25);
     
-    // 3. Logika Pelarut (Konstan 500ml per botol sesuai instruksi dr. Eric)
-    const pelarutVol = jumlahBotol * 500; 
-    const obatVol = jumlahBotol * 25; // 1 botol = 25ml
+    // LOGIKA AKSES VENA
+    let pelarutVol, infoAkses;
+    if (akses === 'sentral') {
+        pelarutVol = jumlahBotol * 100; // Sentral lebih pekat: 100ml per botol
+        infoAkses = "Vena Sentral (Dosis pekat)";
+    } else {
+        pelarutVol = jumlahBotol * 500; // Perifer: 500ml per botol (instruksi dr. Eric)
+        infoAkses = "Vena Perifer Besar";
+    }
+
+    const obatVol = jumlahBotol * 25; 
     const totalCampuran = pelarutVol + obatVol;
-    
-    // 4. Kecepatan Infus (Durasi 24 jam)
     const speed = (totalCampuran / 24).toFixed(1);
 
-    let rows = `
-        <tr><td>Kalium Serum</td><td>${kSerum.toFixed(2)} mEq/L</td></tr>
+    container.innerHTML = `
+        <tr><td>Kalium Serum Saat Ini</td><td>${kSerum.toFixed(2)} mEq/L</td></tr>
         <tr><td>Target Koreksi</td><td>${kTarget.toFixed(1)} mEq/L</td></tr>
-        <tr><td>Dosis Total</td><td><strong>${kebutuhan.toFixed(1)} mEq</strong></td></tr>
         <tr><td>Sediaan RS</td><td><strong>${jumlahBotol} Botol</strong> (25 mEq/25 mL)</td></tr>
         <tr style="background:#fff3e0;"><td>Cairan Pelarut</td><td><strong>${pelarutVol} mL NaCl 0.9%</strong></td></tr>
         <tr style="background:#fff3e0;"><td>Volume Total Campuran</td><td><strong>${totalCampuran} mL</strong></td></tr>
-        <tr><td>Kecepatan Infus</td><td><strong>${speed} mL/jam</strong></td></tr>
-        <tr><td>Catatan</td><td>Berikan via Vena Perifer Besar. Observasi nyeri/flebitis.</td></tr>
+        <tr><td>Akses Vena</td><td>${infoAkses}</td></tr>
+        <tr class="highlight-natrium"><td>Kecepatan Infus</td><td><strong>${speed} mL/jam</strong></td></tr>
     `;
-    
-    container.innerHTML = rows;
 }
 
 function printAndDownload() {
