@@ -100,12 +100,38 @@ body {
 .highlight-natrium { background-color: #e8f5e9; font-weight: bold; }
 
 /* --- FOOTER --- */
-.footer-section { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; }
-.dpjp-section { text-align: center; min-width: 200px; }
-.dpjp-input { margin-top: 5px; width: 100%; padding: 5px; }
-.dpjp-name { margin-top: 40px; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px; min-height: 20px; }
-.btn-action { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; color: white; }
-.btn-print { background: #2196F3; } .btn-clear { background: #f44336; }
+.footer-section { 
+    display: flex; 
+    justify-content: space-between; /* Tombol Kiri, TTD Kanan */
+    align-items: flex-end; 
+    margin-top: 40px; 
+    page-break-inside: avoid; /* Jangan terpotong saat print */
+}
+
+.dpjp-section { 
+    text-align: center; 
+    min-width: 200px; 
+    /* Pastikan di kanan */
+    margin-left: auto; 
+}
+
+.dpjp-input { margin-top: 5px; width: 100%; padding: 5px; text-align: center;}
+.dpjp-name { 
+    margin-top: 60px; /* Jarak untuk tanda tangan manual */
+    font-weight: bold; 
+    border-bottom: 1px solid #000; 
+    padding-bottom: 5px; 
+    min-height: 20px; 
+}
+
+.button-container { 
+    display: flex; 
+    gap: 10px; 
+}
+
+.btn-action { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; }
+.btn-print { background: #2196F3; } 
+.btn-clear { background: #f44336; }
 
 /* --- PRINT RULES (Bug 6 Fix: Strict Mode) --- */
 @media print {
@@ -141,4 +167,11 @@ body {
     body.mode-kalium #kalium-output-box { display: flex !important; }
     
     .calc-content { display: block !important; }
+
+    .footer-section {
+        justify-content: flex-end; /* Dorong TTD mentok ke kanan */
+    }
+    .dpjp-section {
+        margin-left: auto !important; /* Pastikan tetap di kanan saat tombol hilang */
+    }
 }
